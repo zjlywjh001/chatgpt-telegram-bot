@@ -39,9 +39,9 @@ To get started, follow these steps:
 3. Specify the ID of the users and groups who are permitted to use this bot. Separate multiple IDs with commas (`,`). Note that all members of the specified groups will have access to the bot inside the group. **If you leave these options empty, every person and group will be able to use the bot.**           
 4. <del>If the browser is not installed in the default location, specify its executable path. You can also specify proxy settings, if needed.</del>           
 5. <del>Specify the `NOPECHA_KEY` or `CAPTCHA_TOKEN` if you're using the corresponding CAPTCHA solver.</del>           
-6. <del>You can also specify the command to invoke the bot in group chats. The default command is `/chat`.           
-7. Set `IS_PRO_ACCOUNT` to `true` if you're using a premium / pro / paid account.           
-8. Specify the `OPENAI_API_KEY` of your openai platform account.</del>           
+6. You can also specify the command to invoke the bot in group chats. The default command is `/chat`.           
+7. <del>Set `IS_PRO_ACCOUNT` to `true` if you're using a premium / pro / paid account. </del>              
+8. Specify the `OPENAI_API_KEY` of your openai platform account.       
 
 Then you can start the bot with:
 
