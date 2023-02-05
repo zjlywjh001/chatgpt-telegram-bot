@@ -11,7 +11,7 @@ interface ChatContext {
   parentMessageId?: string;
 }
 
-var msgbuf = "";
+var previousTime = 0;
 async function main() {
   // Initialize ChatGPT API.
   const api = new ChatGPTAPI({
@@ -189,19 +189,19 @@ async function main() {
 
     // Send message to ChatGPT
     try {
-      msgbuf = "";
+      previousTime = Date.now();
       const res = await api.sendMessage(text, {
         ...chatContext,
-        // Note: current `onProgress` has no effect because it has not been implemented in `ChatGPTAPIBrowser`.
         onProgress: async (partialResponse) => {
-            if (partialResponse.text.length - msgbuf.length > 20) {
+            var curTime = Date.now();
+            if (curTime - previousTime >= 1.5*1000) {    //Limit Telegram Refresh frequency.
               reply = await editMessage(reply, partialResponse.text);
               bot.sendChatAction(chatId, 'typing');
-              msgbuf = partialResponse.text;
+              previousTime = curTime;
             }
             
           },
-        timeoutMs:10000
+        timeoutMs:10*60*1000
       });
       await editMessage(reply, res.text);
       chatContext = {
