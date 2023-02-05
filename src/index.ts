@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import dotenv from 'dotenv';
-import {ChatGPTAPIBrowser, ChatResponse} from 'chatgpt';
+import {ChatGPTAPI } from 'chatgpt';
 import TelegramBot from 'node-telegram-bot-api';
 
 dotenv.config();
@@ -11,20 +11,12 @@ interface ChatContext {
   parentMessageId?: string;
 }
 
+var msgbuf = "";
 async function main() {
   // Initialize ChatGPT API.
-  const api = new ChatGPTAPIBrowser({
-    email: process.env.OPENAI_EMAIL || '',
-    password: process.env.OPENAI_PASSWORD || '',
-    isGoogleLogin:
-      process.env.IS_GOOGLE_LOGIN?.toLowerCase() == 'true' || false,
-    isProAccount: process.env.IS_PRO_ACCOUNT?.toLowerCase() == 'true' || false,
-    executablePath: process.env.EXECUTABLE_PATH || undefined,
-    proxyServer: process.env.PROXY || undefined,
-    nopechaKey: process.env.NOPECHA_KEY || undefined,
-    captchaToken: process.env.CAPTCHA_TOKEN || undefined,
+  const api = new ChatGPTAPI({
+        apiKey: process.env.OPENAI_API_KEY || ''
   });
-  await api.initSession();
   let chatContext: ChatContext = {};
   logWithTime('🔮 ChatGPT API has started...');
 
@@ -143,7 +135,6 @@ async function main() {
 
       case '/reset':
         await bot.sendChatAction(msg.chat.id, 'typing');
-        await api.resetThread();
         chatContext = {};
         await bot.sendMessage(
           msg.chat.id,
@@ -163,7 +154,6 @@ async function main() {
           );
         } else {
           await bot.sendChatAction(msg.chat.id, 'typing');
-          await api.refreshSession();
           await bot.sendMessage(msg.chat.id, '🔄 Session refreshed.');
           logWithTime(`🔄 Session refreshed by ${userInfo}.`);
         }
@@ -199,24 +189,26 @@ async function main() {
 
     // Send message to ChatGPT
     try {
+      msgbuf = "";
       const res = await api.sendMessage(text, {
         ...chatContext,
         // Note: current `onProgress` has no effect because it has not been implemented in `ChatGPTAPIBrowser`.
-        onProgress: _.throttle(
-          async (partialResponse: ChatResponse) => {
-            reply = await editMessage(reply, partialResponse.response);
-            bot.sendChatAction(chatId, 'typing');
+        onProgress: async (partialResponse) => {
+            if (partialResponse.text.length - msgbuf.length > 20) {
+              reply = await editMessage(reply, partialResponse.text);
+              bot.sendChatAction(chatId, 'typing');
+              msgbuf = partialResponse.text;
+            }
+            
           },
-          4000,
-          {leading: true, trailing: false}
-        ),
+        timeoutMs:10000
       });
-      await editMessage(reply, res.response);
+      await editMessage(reply, res.text);
       chatContext = {
         conversationId: res.conversationId,
-        parentMessageId: res.messageId,
+        parentMessageId: res.id,
       };
-      if (DEBUG >= 1) logWithTime(`📨 Response:\n${res.response}`);
+      if (DEBUG >= 1) logWithTime(`📨 Response:\n${res.text}`);
     } catch (err) {
       logWithTime('⛔️ ChatGPT API error:', (err as Error).message);
       bot.sendMessage(
