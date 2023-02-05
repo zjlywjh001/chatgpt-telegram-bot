@@ -35,13 +35,13 @@ A ChatGPT bot for Telegram based on Node.js. <del> Works with Cloudflare protect
 To get started, follow these steps:
 
 1. Make a copy of the file `.env.example` and rename it as `.env`.
--2. In the `.env` file, enter your OpenAI account information and Telegram bot token. Set `IS_GOOGLE_LOGIN` to `true` if you're using Google auth.
+<del>2. In the `.env` file, enter your OpenAI account information and Telegram bot token. Set `IS_GOOGLE_LOGIN` to `true` if you're using Google auth.</del>
 3. Specify the ID of the users and groups who are permitted to use this bot. Separate multiple IDs with commas (`,`). Note that all members of the specified groups will have access to the bot inside the group. **If you leave these options empty, every person and group will be able to use the bot.**
--4. If the browser is not installed in the default location, specify its executable path. You can also specify proxy settings, if needed.
--5. Specify the `NOPECHA_KEY` or `CAPTCHA_TOKEN` if you're using the corresponding CAPTCHA solver.
+<del>4. If the browser is not installed in the default location, specify its executable path. You can also specify proxy settings, if needed.</del>
+<del>5. Specify the `NOPECHA_KEY` or `CAPTCHA_TOKEN` if you're using the corresponding CAPTCHA solver.</del>
 6. You can also specify the command to invoke the bot in group chats. The default command is `/chat`.
--7. Set `IS_PRO_ACCOUNT` to `true` if you're using a premium / pro / paid account.
-8. Specify the `OPENAI_API_KEY` of your openai platform account.
+<del>7. Set `IS_PRO_ACCOUNT` to `true` if you're using a premium / pro / paid account.
+8. Specify the `OPENAI_API_KEY` of your openai platform account.</del>
 
 Then you can start the bot with:
 
